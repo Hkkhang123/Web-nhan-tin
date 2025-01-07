@@ -1,5 +1,5 @@
 import cloudinary from "../lib/cloudinary.js"
-import { generateJWT } from "../lib/utils.js"
+import { generateJWT, generateVerificationCode } from "../lib/utils.js"
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
 
@@ -22,11 +22,14 @@ export const signup = async (req, res) => {
             return res.status(400).json({message: "Email đã tồn tại"})
         const salt = await bcrypt.genSalt(10)
         const hashedPass = await bcrypt.hash(password,salt)
+        const verificationToken = generateVerificationCode()
 
         const newUser = new User({
             fullName,
             email,
-            password: hashedPass
+            password: hashedPass,
+            verificationToken,
+            verificationTokenExpiredAt: Date.now() + 5 * 60 * 1000
         })
 
         if (newUser) {
@@ -35,10 +38,12 @@ export const signup = async (req, res) => {
             await newUser.save()
 
             res.status(201).json({
-                _id: newUser._id,
-                fullName: newUser.fullName,
-                email: newUser.email,
-                prolifePic: newUser.prolifePic,
+                success: true,
+                message: "Đăng ký thành công",
+                newUser: {
+                    ...newUser._doc,
+                    password: undefined
+                }
             })
         } else {
             res.status(400).json({message: "Dữ liệu không hợp lệ"})
