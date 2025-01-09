@@ -1,5 +1,6 @@
 import cloudinary from "../lib/cloudinary.js"
 import { generateJWT, generateVerificationCode } from "../lib/utils.js"
+import { sendVerificationEmail } from "../mailtrap/email.js"
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
 
@@ -36,6 +37,8 @@ export const signup = async (req, res) => {
             //Tạo token jwt
             generateJWT(newUser._id, res)
             await newUser.save()
+
+            await sendVerificationEmail(newUser.email, verificationToken)
 
             res.status(201).json({
                 success: true,
