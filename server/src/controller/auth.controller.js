@@ -29,8 +29,8 @@ export const signup = async (req, res) => {
             fullName,
             email,
             password: hashedPass,
-            verificationToken,
-            verificationTokenExpiredAt: Date.now() + 5 * 60 * 1000
+            //verificationToken,
+            //verificationTokenExpiredAt: Date.now() + 5 * 60 * 1000
         })
 
         if (newUser) {
@@ -38,7 +38,7 @@ export const signup = async (req, res) => {
             generateJWT(newUser._id, res)
             await newUser.save()
 
-            await sendVerificationEmail(newUser.email, verificationToken)
+            //await sendVerificationEmail(newUser.email, verificationToken)
 
             res.status(201).json({
                 success: true,
