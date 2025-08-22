@@ -1,17 +1,21 @@
-import express from "express"
-import { checkAuth, login, logout, signup, updateProfile } from "../controller/auth.controller.js"
-import { protectRoutes } from "../middleware/auth.middleware.js"
+import express from "express";
+import { checkAuth, login, logout, signup, updateProfile, verifyTwoFactorAuth, resendTwoFactorCode } from "../controller/auth.controller.js";
+import { protectRoutes } from "../middleware/auth.middleware.js";
 
-const router = express.Router()
+const router = express.Router();
 
-router.post("/dangky", signup )
+router.post("/dangky", signup );
 
-router.post("/dangnhap", login)
+router.post("/dangnhap", login);
 
-router.post("/dangxuat", logout)
+router.post("/verify-2fa", verifyTwoFactorAuth);
 
-router.put("/update-profile", protectRoutes, updateProfile)
+router.post("/resend-2fa-code", resendTwoFactorCode);
 
-router.get("/check",protectRoutes, checkAuth)
+router.post("/dangxuat", logout);
 
-export default router
+router.put("/update-profile", protectRoutes, updateProfile);
+
+router.get("/check",protectRoutes, checkAuth);
+
+export default router;
